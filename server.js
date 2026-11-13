@@ -1,6 +1,6 @@
 
 require("dotenv").config();
-
+const path = require("path");
 const express = require("express");
 const axios = require("axios");
 const { createClient } = require("@supabase/supabase-js");
@@ -9,6 +9,8 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, "public")));
+app.use("/api/admin", adminRoutes);
 app.use("/api/admin", adminRoutes);
 const supabase = createClient(
   process.env.SUPABASE_URL,
