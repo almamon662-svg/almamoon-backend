@@ -1,0 +1,16 @@
+
+{
+  "name": "almamoon-backend",
+  "version": "1.0.0",
+  "description": "Almamoon Digital Products Marketplace Backend",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.0.0",
+    "axios": "^1.7.0",
+    "dotenv": "^16.4.0",
+    "express": "^4.21.0"
+  }
+}
