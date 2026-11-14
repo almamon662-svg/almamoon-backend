@@ -9,7 +9,10 @@ const adminRoutes = require("./src/admin");
 
 const app = express();
 
-// CORS configuration
+// =====================================
+// CORS
+// =====================================
+
 const allowedOrigins = [
   "https://almamon662-svg.github.io"
 ];
@@ -22,8 +25,14 @@ app.use((req, res, next) => {
   }
 
   res.setHeader("Vary", "Origin");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization"
+  );
 
   if (req.method === "OPTIONS") {
     return res.sendStatus(204);
@@ -34,9 +43,12 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/api/admin", adminRoutes);
+// =====================================
+// SUPABASE
+// =====================================
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -50,32 +62,116 @@ const SSL_URL =
     ? "https://securepay.sslcommerz.com"
     : "https://sandbox.sslcommerz.com";
 
-// Home
+
+// =====================================
+// ADMIN ROUTES
+// =====================================
+
+app.use("/api/admin", adminRoutes);
+
+
+// =====================================
+// HOME
+// =====================================
+
 app.get("/", (req, res) => {
   res.send("Welcome to Almamoon Backend!");
 });
 
-// Get all active products
+
+// =====================================
+// GET ALL ACTIVE PRODUCTS
+// =====================================
+
 app.get("/api/products", async (req, res) => {
   try {
     const { data, error } = await supabase
       .from("products")
-      .select("id, title, description, price, currency, image_url")
-      .eq("active", true);
+      .select(
+        "id, title, description, price, currency, category, image_url, featured_order"
+      )
+      .eq("active", true)
+      .order("created_at", { ascending: false });
 
     if (error) throw error;
 
     res.json(data);
+
   } catch (error) {
     console.error("PRODUCT_FETCH_ERROR:", error.message);
-    res.status(500).json({ error: "Could not load products" });
+
+    res.status(500).json({
+      error: "Could not load products"
+    });
   }
 });
 
-// Create checkout
+
+// =====================================
+// GET HOMEPAGE TOP 5 PRODUCTS
+// =====================================
+
+app.get("/api/products/top5", async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("products")
+      .select(
+        "id, title, description, price, currency, category, image_url, featured_order"
+      )
+      .eq("active", true)
+      .not("featured_order", "is", null)
+      .order("featured_order", { ascending: true });
+
+    if (error) throw error;
+
+    res.json(data);
+
+  } catch (error) {
+    console.error("TOP5_FETCH_ERROR:", error.message);
+
+    res.status(500).json({
+      error: "Could not load Top 5 products"
+    });
+  }
+});
+
+
+// =====================================
+// GET PUBLIC HOMEPAGE HIGHLIGHTS
+// =====================================
+
+app.get("/api/highlights", async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("homepage_highlights")
+      .select("position, title, subtitle, category, image_url")
+      .order("position", { ascending: true });
+
+    if (error) throw error;
+
+    res.json(data);
+
+  } catch (error) {
+    console.error("HIGHLIGHTS_FETCH_ERROR:", error.message);
+
+    res.status(500).json({
+      error: "Could not load homepage highlights"
+    });
+  }
+});
+
+
+// =====================================
+// CREATE CHECKOUT
+// =====================================
+
 app.post("/api/checkout", async (req, res) => {
   try {
-    const { product_id, customer_name, customer_email } = req.body;
+    const {
+      product_id,
+      customer_name,
+      customer_email
+    } = req.body;
 
     if (!product_id || !customer_name || !customer_email) {
       return res.status(400).json({
@@ -91,7 +187,26 @@ app.post("/api/checkout", async (req, res) => {
       .single();
 
     if (error || !product) {
-      return res.status(404).json({ error: "Product not found" });
+      return res.status(404).json({
+        error: "Product not found"
+      });
+    }
+
+    // SSLCommerz checkout is restricted to BDT here.
+    if (product.currency !== "BDT") {
+      return res.status(400).json({
+        error: "This product currency is not supported by the current payment gateway. Please use a BDT-priced product."
+      });
+    }
+
+    if (
+      !process.env.SSLCOMMERZ_STORE_ID ||
+      !process.env.SSLCOMMERZ_STORE_PASSWORD ||
+      !process.env.SERVER_URL
+    ) {
+      return res.status(503).json({
+        error: "Payment gateway is not configured yet"
+      });
     }
 
     const tran_id = "ALM" + Date.now();
@@ -102,7 +217,7 @@ app.post("/api/checkout", async (req, res) => {
         tran_id,
         product_id,
         amount: product.price,
-        currency: product.currency || "BDT",
+        currency: product.currency,
         customer_name,
         customer_email,
         status: "PENDING"
@@ -116,18 +231,21 @@ app.post("/api/checkout", async (req, res) => {
       store_id: process.env.SSLCOMMERZ_STORE_ID,
       store_passwd: process.env.SSLCOMMERZ_STORE_PASSWORD,
       total_amount: product.price,
-      currency: product.currency || "BDT",
+      currency: product.currency,
       tran_id,
+
       success_url: `${process.env.SERVER_URL}/payment/success`,
       fail_url: `${process.env.SERVER_URL}/payment/fail`,
       cancel_url: `${process.env.SERVER_URL}/payment/cancel`,
       ipn_url: `${process.env.SERVER_URL}/payment/ipn`,
+
       cus_name: customer_name,
       cus_email: customer_email,
       cus_add1: "Bangladesh",
       cus_city: "Chattogram",
       cus_country: "Bangladesh",
       cus_phone: "01700000000",
+
       shipping_method: "NO",
       product_name: product.title,
       product_category: "Digital Product",
@@ -157,33 +275,59 @@ app.post("/api/checkout", async (req, res) => {
     });
 
   } catch (error) {
-    console.error(error.response?.data || error.message);
-    res.status(500).json({ error: "Checkout failed" });
+    console.error(
+      "CHECKOUT_ERROR:",
+      error.response?.data || error.message
+    );
+
+    res.status(500).json({
+      error: "Checkout failed"
+    });
   }
 });
 
-// Payment success return
+
+// =====================================
+// PAYMENT SUCCESS RETURN
+// =====================================
+
 app.post("/payment/success", (req, res) => {
-  res.send("Payment submitted. Verification is pending.");
+  res.send(
+    "Payment submitted. Verification is pending."
+  );
 });
 
-// Payment failed
+
+// =====================================
+// PAYMENT FAILED
+// =====================================
+
 app.post("/payment/fail", (req, res) => {
   res.send("Payment failed. Please try again.");
 });
 
-// Payment cancelled
+
+// =====================================
+// PAYMENT CANCELLED
+// =====================================
+
 app.post("/payment/cancel", (req, res) => {
   res.send("Payment cancelled.");
 });
 
-// Payment IPN verification
+
+// =====================================
+// PAYMENT IPN VERIFICATION
+// =====================================
+
 app.post("/payment/ipn", async (req, res) => {
   try {
     const { val_id, tran_id } = req.body;
 
     if (!val_id || !tran_id) {
-      return res.status(400).send("Missing payment details");
+      return res.status(400).send(
+        "Missing payment details"
+      );
     }
 
     const validation = await axios.get(
@@ -217,7 +361,9 @@ app.post("/payment/ipn", async (req, res) => {
       payment.currency === order.currency;
 
     if (!valid) {
-      return res.status(400).send("Payment verification failed");
+      return res.status(400).send(
+        "Payment verification failed"
+      );
     }
 
     if (order.status !== "PAID") {
@@ -233,19 +379,31 @@ app.post("/payment/ipn", async (req, res) => {
     res.send("Payment verified");
 
   } catch (error) {
-    console.error(error.response?.data || error.message);
-    res.status(500).send("IPN verification failed");
+    console.error(
+      "PAYMENT_IPN_ERROR:",
+      error.response?.data || error.message
+    );
+
+    res.status(500).send(
+      "IPN verification failed"
+    );
   }
 });
 
-// Secure PDF download
+
+// =====================================
+// SECURE PDF DOWNLOAD
+// =====================================
+
 app.get("/api/download/:orderId", async (req, res) => {
   try {
     const { orderId } = req.params;
     const { email } = req.query;
 
     if (!email) {
-      return res.status(400).json({ error: "Email required" });
+      return res.status(400).json({
+        error: "Email required"
+      });
     }
 
     const { data: order, error } = await supabase
@@ -255,41 +413,64 @@ app.get("/api/download/:orderId", async (req, res) => {
       .single();
 
     if (error || !order) {
-      return res.status(404).json({ error: "Order not found" });
+      return res.status(404).json({
+        error: "Order not found"
+      });
     }
 
     if (
       order.status !== "PAID" ||
-      order.customer_email.toLowerCase() !== String(email).toLowerCase()
+      order.customer_email.toLowerCase() !==
+        String(email).toLowerCase()
     ) {
-      return res.status(403).json({ error: "Access denied" });
+      return res.status(403).json({
+        error: "Access denied"
+      });
     }
 
-    const { data: product, error: productError } = await supabase
-      .from("products")
-      .select("pdf_path")
-      .eq("id", order.product_id)
-      .single();
+    const { data: product, error: productError } =
+      await supabase
+        .from("products")
+        .select("pdf_path")
+        .eq("id", order.product_id)
+        .single();
 
     if (productError || !product?.pdf_path) {
-      return res.status(404).json({ error: "PDF not found" });
+      return res.status(404).json({
+        error: "PDF not found"
+      });
     }
 
-    const { data: signed, error: signedError } = await supabase
-      .storage
-      .from("digital-products")
-      .createSignedUrl(product.pdf_path, 60);
+    const { data: signed, error: signedError } =
+      await supabase.storage
+        .from("digital-products")
+        .createSignedUrl(product.pdf_path, 60);
 
     if (signedError) throw signedError;
 
-    res.json({ download_url: signed.signedUrl });
+    res.json({
+      download_url: signed.signedUrl
+    });
 
   } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ error: "Download failed" });
+    console.error(
+      "DOWNLOAD_ERROR:",
+      error.message
+    );
+
+    res.status(500).json({
+      error: "Download failed"
+    });
   }
 });
 
+
+// =====================================
+// START SERVER
+// =====================================
+
 app.listen(PORT, () => {
-  console.log(`Almamoon Backend running on port ${PORT}`);
+  console.log(
+    `Almamoon Backend running on port ${PORT}`
+  );
 });
