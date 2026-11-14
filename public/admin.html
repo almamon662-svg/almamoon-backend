@@ -9,244 +9,83 @@
 
 <style>
 :root{
- --bg:#f4f3f0;
- --paper:#fff;
- --ink:#181818;
- --muted:#777873;
- --line:#e6e4df;
- --soft:#ecebe7;
+ --bg:#f4f3f0;--paper:#fff;--ink:#181818;
+ --muted:#777873;--line:#e6e4df;--soft:#ecebe7;
 }
 *{box-sizing:border-box}
-body{
- margin:0;
- background:var(--bg);
- color:var(--ink);
- font-family:"DM Sans",sans-serif;
-}
-body.dark{
- --bg:#171817;
- --paper:#222421;
- --ink:#f2f0eb;
- --muted:#aaa9a2;
- --line:#393a36;
- --soft:#2c2e2a;
-}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"DM Sans",sans-serif}
+body.dark{--bg:#171817;--paper:#222421;--ink:#f2f0eb;--muted:#aaa9a2;--line:#393a36;--soft:#2c2e2a}
 button,input,select,textarea{font:inherit}
 button{cursor:pointer}
-.topbar{
- height:65px;
- display:flex;
- align-items:center;
- justify-content:space-between;
- padding:0 4%;
- border-bottom:1px solid var(--line);
-}
-.brand{
- font-size:17px;
- font-weight:700;
- display:flex;
- align-items:center;
- gap:10px;
-}
-.brand-mark{
- width:27px;height:27px;
- display:grid;place-items:center;
- background:var(--ink);
- color:var(--bg);
- border-radius:8px;
-}
+.topbar{height:65px;display:flex;align-items:center;justify-content:space-between;padding:0 4%;border-bottom:1px solid var(--line)}
+.brand{font-size:17px;font-weight:700;display:flex;align-items:center;gap:10px}
+.brand-mark{width:27px;height:27px;display:grid;place-items:center;background:var(--ink);color:var(--bg);border-radius:8px}
 .top-right{display:flex;align-items:center;gap:15px}
-.theme-btn{
- border:1px solid var(--line);
- background:var(--paper);
- color:var(--ink);
- padding:8px 13px;
- border-radius:25px;
-}
-.layout{
- display:grid;
- grid-template-columns:235px 1fr;
- min-height:calc(100vh - 65px);
-}
-.sidebar{
- border-right:1px solid var(--line);
- padding:28px 17px;
-}
-.side-label{
- color:var(--muted);
- font-size:9px;
- letter-spacing:2px;
- margin:15px 10px;
- text-transform:uppercase;
-}
-.nav-btn{
- width:100%;
- display:flex;
- align-items:center;
- gap:12px;
- border:0;
- background:transparent;
- color:var(--muted);
- text-align:left;
- padding:13px 12px;
- border-radius:9px;
- font-size:12px;
- margin-bottom:5px;
-}
-.nav-btn:hover,.nav-btn.active{
- background:var(--soft);
- color:var(--ink);
-}
+.theme-btn,.secondary{border:1px solid var(--line);background:var(--paper);color:var(--ink);padding:9px 14px;border-radius:25px;font-size:10px}
+.layout{display:grid;grid-template-columns:235px 1fr;min-height:calc(100vh - 65px)}
+.sidebar{border-right:1px solid var(--line);padding:25px 15px}
+.side-label{color:var(--muted);font-size:9px;letter-spacing:2px;margin:15px 10px;text-transform:uppercase}
+.nav-btn{width:100%;display:flex;align-items:center;gap:12px;border:0;background:transparent;color:var(--muted);text-align:left;padding:13px 12px;border-radius:9px;font-size:12px;margin-bottom:5px}
+.nav-btn:hover,.nav-btn.active{background:var(--soft);color:var(--ink)}
 .main{padding:35px 4%;max-width:1500px;width:100%}
-.eyebrow{
- font-size:9px;
- text-transform:uppercase;
- letter-spacing:2px;
- color:var(--muted);
- margin-bottom:12px;
-}
-h1{
- font:500 36px "Playfair Display",serif;
- margin:0 0 8px;
-}
-h2{
- font:500 24px "Playfair Display",serif;
- margin:0 0 8px;
-}
+.eyebrow{font-size:9px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:12px}
+h1{font:500 36px "Playfair Display",serif;margin:0 0 8px}
+h2{font:500 24px "Playfair Display",serif;margin:0 0 8px}
 h3{font-size:13px;margin:0 0 15px}
 .subtitle{font-size:11px;color:var(--muted);line-height:1.7}
-.section{display:none}
-.section.active{display:block}
-.stats{
- display:grid;
- grid-template-columns:repeat(3,1fr);
- gap:14px;
- margin:28px 0;
-}
-.stat,.panel{
- background:var(--paper);
- border:1px solid var(--line);
- border-radius:13px;
- padding:20px;
-}
+.section{display:none}.section.active{display:block}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:28px 0}
+.stat,.panel{background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:20px}
 .stat small{font-size:10px;color:var(--muted)}
-.stat strong{
- display:block;
- font:500 29px "Playfair Display",serif;
- margin-top:8px;
-}
+.stat strong{display:block;font:500 29px "Playfair Display",serif;margin-top:8px}
 .panel{margin-bottom:18px}
-.panel-head{
- display:flex;
- justify-content:space-between;
- align-items:center;
- gap:10px;
- margin-bottom:17px;
-}
-.form-grid{
- display:grid;
- grid-template-columns:repeat(2,minmax(0,1fr));
- gap:15px;
-}
+.panel-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:17px}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
 .field{display:flex;flex-direction:column;gap:7px}
 .field.full{grid-column:1/-1}
 label{font-size:10px;color:var(--muted)}
-input,select,textarea{
- width:100%;
- border:1px solid var(--line);
- border-radius:8px;
- background:var(--bg);
- color:var(--ink);
- padding:12px;
- font-size:11px;
- outline:none;
-}
-textarea{min-height:90px;resize:vertical}
+input,select,textarea{width:100%;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);padding:12px;font-size:11px;outline:none}
+textarea{min-height:85px;resize:vertical}
 input:focus,select:focus,textarea:focus{border-color:var(--muted)}
-.primary{
- border:0;
- border-radius:25px;
- background:var(--ink);
- color:var(--bg);
- padding:11px 19px;
- font-size:10px;
-}
-.secondary{
- border:1px solid var(--line);
- border-radius:25px;
- background:transparent;
- color:var(--ink);
- padding:10px 16px;
- font-size:10px;
-}
+.primary{border:0;border-radius:25px;background:var(--ink);color:var(--bg);padding:11px 19px;font-size:10px}
+.primary:disabled{opacity:.5;cursor:not-allowed}
+.secondary{background:transparent}
 .actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:17px}
-.notice{
- display:none;
- padding:12px;
- border-radius:8px;
- margin:12px 0;
- font-size:11px;
- line-height:1.6;
- background:var(--soft);
-}
+.notice{display:none;padding:12px;border-radius:8px;margin:12px 0;font-size:11px;line-height:1.6;background:var(--soft)}
 .notice.show{display:block}
 .product-list{display:grid;gap:9px}
-.product-item{
- display:flex;
- align-items:center;
- gap:12px;
- padding:12px;
- border:1px solid var(--line);
- border-radius:10px;
-}
-.product-item img{
- width:48px;height:48px;
- object-fit:contain;
- background:var(--soft);
- border-radius:7px;
-}
+.product-item{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);border-radius:10px}
+.product-item img{width:48px;height:48px;object-fit:contain;background:var(--soft);border-radius:7px}
 .product-item .details{flex:1;min-width:0}
 .product-item strong{font-size:11px;display:block}
 .product-item small{font-size:9px;color:var(--muted)}
 .product-item input[type=checkbox]{width:17px;height:17px}
-.highlight-grid{
- display:grid;
- grid-template-columns:repeat(2,minmax(0,1fr));
- gap:15px;
-}
-.highlight-card{
- border:1px solid var(--line);
- background:var(--paper);
- border-radius:12px;
- padding:16px;
-}
-.highlight-card img{
- width:100%;
- height:125px;
- object-fit:contain;
- background:var(--soft);
- border-radius:8px;
- margin-bottom:12px;
-}
+.highlight-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.highlight-card{border:1px solid var(--line);background:var(--paper);border-radius:12px;padding:16px}
+.highlight-card img{width:100%;height:125px;object-fit:contain;background:var(--soft);border-radius:8px;margin-bottom:12px}
 .highlight-card .field{margin-top:10px}
-.login-wrap{
- max-width:430px;
- margin:70px auto;
-}
+.login-wrap{max-width:430px;margin:70px auto}
 .login-wrap .panel{padding:28px}
-#app{display:none}
-#login{display:block}
+#app{display:none}#login{display:block}
 .small-note{font-size:9px;color:var(--muted);line-height:1.6}
+.editor-preview{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--paper);margin-top:15px}
+.preview-top{padding:10px 15px;border-bottom:1px solid var(--line);font-size:9px;color:var(--muted);display:flex;justify-content:space-between}
+.preview-site{padding:35px 20px;text-align:center;min-height:280px;display:flex;flex-direction:column;justify-content:center;gap:14px}
+.preview-site h2{font-size:34px}
+.preview-site p{font-size:12px;line-height:1.7}
+.preview-site .preview-button{display:inline-block;border:1px solid currentColor;border-radius:25px;padding:10px 18px;font-size:10px;margin:auto}
+.preview-about{padding:22px;text-align:center;border-top:1px solid var(--line)}
+.preview-footer{padding:18px;text-align:center;border-top:1px solid var(--line);font-size:10px}
+.frame-wrap{height:650px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:white}
+.frame-wrap iframe{width:100%;height:100%;border:0}
+.range-row{display:grid;grid-template-columns:1fr 55px;gap:10px;align-items:center}
+.range-row input[type=range]{padding:0}
+.product-edit{display:none;margin-top:12px;padding:15px;border:1px solid var(--line);border-radius:10px;background:var(--soft)}
+.product-edit.open{display:block}
+.color-field{height:42px;padding:4px}
 @media(max-width:750px){
  .layout{grid-template-columns:1fr}
- .sidebar{
-  border-right:0;
-  border-bottom:1px solid var(--line);
-  padding:10px;
-  display:flex;
-  gap:5px;
-  overflow-x:auto;
- }
+ .sidebar{border-right:0;border-bottom:1px solid var(--line);padding:10px;display:flex;gap:5px;overflow-x:auto}
  .side-label{display:none}
  .nav-btn{white-space:nowrap;width:auto;margin:0}
  .main{padding:25px 15px}
@@ -259,17 +98,14 @@ input:focus,select:focus,textarea:focus{border-color:var(--muted)}
  h1{font-size:29px}
  .stats{gap:8px}
  .stat{padding:13px}
+ .product-item{flex-wrap:wrap}
 }
 </style>
 </head>
-
 <body>
 
 <header class="topbar">
- <div class="brand">
-  <span class="brand-mark">A</span>
-  Almamoon <span style="font-weight:400;color:var(--muted)">/ Studio</span>
- </div>
+ <div class="brand"><span class="brand-mark">A</span> Almamoon <span style="font-weight:400;color:var(--muted)">/ Studio</span></div>
  <div class="top-right">
   <button class="theme-btn" onclick="toggleTheme()">☼ / ☾</button>
   <span style="font-size:10px;color:var(--muted)">Admin</span>
@@ -285,19 +121,17 @@ input:focus,select:focus,textarea:focus{border-color:var(--muted)}
    <label>ADMIN SECRET</label>
    <input type="password" id="secret" placeholder="Enter your Admin Secret">
   </div>
-  <div class="actions">
-   <button class="primary" onclick="connect()">Connect to Almamoon ↗</button>
-  </div>
+  <div class="actions"><button class="primary" onclick="connect()">Connect to Almamoon ↗</button></div>
   <div id="loginMsg" class="notice"></div>
  </div>
 </div>
 
 <div id="app">
 <div class="layout">
-
 <aside class="sidebar">
  <div class="side-label">Workspace</div>
  <button class="nav-btn active" onclick="showSection('dashboard',this)">⌂ Dashboard</button>
+ <button class="nav-btn" onclick="showSection('website',this)">✎ Website Editor</button>
  <button class="nav-btn" onclick="showSection('products',this)">▧ Products</button>
  <button class="nav-btn" onclick="showSection('upload',this)">＋ Upload Product</button>
  <button class="nav-btn" onclick="showSection('top5',this)">☆ Top 5 Products</button>
@@ -312,42 +146,97 @@ input:focus,select:focus,textarea:focus{border-color:var(--muted)}
  <div class="eyebrow">Your workspace</div>
  <h1>Good to see you.</h1>
  <p class="subtitle">Manage your Almamoon digital store from one place.</p>
-
  <div class="stats">
-  <div class="stat">
-   <small>Total Products</small>
-   <strong id="totalProducts">0</strong>
-  </div>
-  <div class="stat">
-   <small>Featured Products</small>
-   <strong id="featuredProducts">0 / 5</strong>
-  </div>
-  <div class="stat">
-   <small>Highlight Cards</small>
-   <strong id="totalHighlights">0 / 5</strong>
-  </div>
+  <div class="stat"><small>Total Products</small><strong id="totalProducts">0</strong></div>
+  <div class="stat"><small>Featured Products</small><strong id="featuredProducts">0 / 5</strong></div>
+  <div class="stat"><small>Highlight Cards</small><strong id="totalHighlights">0 / 5</strong></div>
  </div>
-
  <div class="panel">
   <div class="eyebrow">Quick actions</div>
   <h2>Your store, your control.</h2>
-  <p class="subtitle">Upload products, choose your homepage collection and update the five Highlight Cards.</p>
+  <p class="subtitle">Edit your website, upload products, choose your homepage collection and update the five Highlight Cards.</p>
   <div class="actions">
-   <button class="primary" onclick="showSection('upload')">Upload a Product +</button>
+   <button class="primary" onclick="showSection('website')">Edit Website</button>
+   <button class="secondary" onclick="showSection('upload')">Upload Product +</button>
    <button class="secondary" onclick="showSection('highlights')">Edit Highlights</button>
   </div>
  </div>
 </section>
 
+<!-- WEBSITE EDITOR -->
+<section id="website" class="section">
+ <div class="eyebrow">Website appearance</div>
+ <h1>Website Editor.</h1>
+ <p class="subtitle">Edit your website content and appearance. Preview your changes before saving.</p>
+
+ <div class="panel">
+  <div class="panel-head"><h3>Live editor preview</h3><span class="small-note">Preview of your editable content</span></div>
+  <div class="editor-preview">
+   <div class="preview-top"><span>ALMAMOON WEBSITE PREVIEW</span><span>EDITOR</span></div>
+   <div class="preview-site" id="previewHero">
+    <div class="eyebrow" id="previewEyebrow">A CURATED DIGITAL COLLECTION</div>
+    <h2 id="previewTitle">Continue with Almamoon</h2>
+    <p id="previewSubtitle">Create your space with thoughtfully designed digital templates.</p>
+    <span class="preview-button" id="previewButton">Explore products</span>
+   </div>
+   <div class="preview-about" id="previewAbout">Discover digital products designed to make your work easier.</div>
+   <div class="preview-footer" id="previewFooter">© Almamoon. All rights reserved.</div>
+  </div>
+ </div>
+
+ <div class="panel">
+  <h3>Hero Section</h3>
+  <div class="form-grid">
+   <div class="field full"><label>SMALL HEADING / EYEBROW</label><input id="sEyebrow" oninput="updatePreview()"></div>
+   <div class="field full"><label>MAIN HEADING</label><input id="sHeroTitle" oninput="updatePreview()"></div>
+   <div class="field full"><label>SUBTITLE</label><textarea id="sHeroSubtitle" oninput="updatePreview()"></textarea></div>
+   <div class="field"><label>BUTTON TEXT</label><input id="sButtonText" oninput="updatePreview()"></div>
+  </div>
+ </div>
+
+ <div class="panel">
+  <h3>About Section</h3>
+  <div class="field"><label>ABOUT TEXT</label><textarea id="sAbout" oninput="updatePreview()"></textarea></div>
+ </div>
+
+ <div class="panel">
+  <h3>Footer & Contact</h3>
+  <div class="form-grid">
+   <div class="field"><label>FOOTER TEXT</label><input id="sFooter" oninput="updatePreview()"></div>
+   <div class="field"><label>CONTACT EMAIL / TEXT</label><input id="sContact" oninput="updatePreview()"></div>
+  </div>
+ </div>
+
+ <div class="panel">
+  <h3>Website Colors</h3>
+  <div class="form-grid">
+   <div class="field"><label>BACKGROUND COLOR</label><input class="color-field" type="color" id="sBg" oninput="updatePreview()"></div>
+   <div class="field"><label>TEXT COLOR</label><input class="color-field" type="color" id="sInk" oninput="updatePreview()"></div>
+   <div class="field"><label>ACCENT / BUTTON COLOR</label><input class="color-field" type="color" id="sAccent" oninput="updatePreview()"></div>
+   <div class="field"><label>BUTTON TEXT COLOR</label><input class="color-field" type="color" id="sButtonColor" oninput="updatePreview()"></div>
+  </div>
+ </div>
+
+ <div class="actions">
+  <button class="primary" onclick="saveWebsiteSettings()">Save Website Settings ↗</button>
+  <button class="secondary" onclick="loadWebsiteSettings()">Reset to Saved Settings</button>
+ </div>
+ <div id="settingsMsg" class="notice"></div>
+
+ <div class="panel" style="margin-top:22px">
+  <div class="panel-head"><h3>Actual Website Preview</h3><button class="secondary" onclick="reloadWebsiteFrame()">Refresh Preview</button></div>
+  <p class="small-note">এখানে তোমার Public Website দেখা যাবে। Public Website-এ নতুন Settings দেখানোর জন্য index.html আপডেট করতে হবে।</p>
+  <div class="frame-wrap"><iframe id="websiteFrame" src="https://almamon662-svg.github.io" title="Almamoon Website Preview"></iframe></div>
+ </div>
+</section>
+
+<!-- PRODUCTS -->
 <section id="products" class="section">
  <div class="eyebrow">Store inventory</div>
  <h1>Products.</h1>
- <p class="subtitle">View the products currently available in your store.</p>
+ <p class="subtitle">Edit product information, prices, files and image appearance.</p>
  <div class="panel">
-  <div class="panel-head">
-   <h3>All Products</h3>
-   <button class="secondary" onclick="loadProducts()">Refresh</button>
-  </div>
+  <div class="panel-head"><h3>All Products</h3><button class="secondary" onclick="loadProducts()">Refresh</button></div>
   <div id="allProducts" class="product-list"></div>
  </div>
 </section>
@@ -356,66 +245,27 @@ input:focus,select:focus,textarea:focus{border-color:var(--muted)}
  <div class="eyebrow">New digital product</div>
  <h1>Upload product.</h1>
  <p class="subtitle">Add a new digital product to your Almamoon store.</p>
-
  <div class="panel">
   <form id="uploadForm">
    <div class="form-grid">
-    <div class="field full">
-     <label>PRODUCT NAME</label>
-     <input name="title" required placeholder="Enter product name">
-    </div>
-    <div class="field full">
-     <label>DESCRIPTION</label>
-     <textarea name="description" placeholder="Describe your product"></textarea>
-    </div>
-    <div class="field">
-     <label>CATEGORY</label>
-     <select name="category" required>
-      <option value="Resume & CV Templates">Resume & CV Templates</option>
-      <option value="Presentation Templates">Presentation Templates</option>
-      <option value="Social Media Templates">Social Media Templates</option>
-      <option value="Menu Templates">Menu Templates</option>
-      <option value="Canva Templates">Canva Templates</option>
-      <option value="E-books">E-books</option>
-      <option value="Business">Business</option>
-      <option value="Other">Other</option>
-     </select>
-    </div>
-    <div class="field">
-     <label>PRICE</label>
-     <input name="price" type="number" min="0" step="0.01" required placeholder="3.99">
-    </div>
-    <div class="field">
-     <label>CURRENCY</label>
-     <select name="currency" id="currency" required>
-      <option value="USD" selected>USD</option>
-      <option value="BDT">BDT</option>
-      <option value="EUR">EUR</option>
-      <option value="GBP">GBP</option>
-      <option value="CAD">CAD</option>
-      <option value="AUD">AUD</option>
-      <option value="INR">INR</option>
-      <option value="AED">AED</option>
-      <option value="SAR">SAR</option>
-      <option value="MYR">MYR</option>
-      <option value="SGD">SGD</option>
-      <option value="JPY">JPY</option>
-      <option value="CNY">CNY</option>
-      <option value="PKR">PKR</option>
-     </select>
-    </div>
-    <div class="field">
-     <label>PRODUCT COVER IMAGE</label>
-     <input name="image" type="file" accept="image/*">
-    </div>
-    <div class="field full">
-     <label>PRODUCT PDF FILE</label>
-     <input name="pdf" type="file" accept="application/pdf" required>
-    </div>
+    <div class="field full"><label>PRODUCT NAME</label><input name="title" required placeholder="Enter product name"></div>
+    <div class="field full"><label>DESCRIPTION</label><textarea name="description" placeholder="Describe your product"></textarea></div>
+    <div class="field"><label>CATEGORY</label><select name="category" required>
+     <option value="Resume & CV Templates">Resume & CV Templates</option>
+     <option value="Presentation Templates">Presentation Templates</option>
+     <option value="Social Media Templates">Social Media Templates</option>
+     <option value="Menu Templates">Menu Templates</option>
+     <option value="Canva Templates">Canva Templates</option>
+     <option value="E-books">E-books</option><option value="Business">Business</option><option value="Other">Other</option>
+    </select></div>
+    <div class="field"><label>PRICE</label><input name="price" type="number" min="0" step="0.01" required placeholder="3.99"></div>
+    <div class="field"><label>CURRENCY</label><select name="currency" id="currency">
+     <option value="USD">USD</option><option value="BDT">BDT</option><option value="EUR">EUR</option><option value="GBP">GBP</option><option value="CAD">CAD</option><option value="AUD">AUD</option><option value="INR">INR</option><option value="AED">AED</option><option value="SAR">SAR</option><option value="MYR">MYR</option><option value="SGD">SGD</option><option value="JPY">JPY</option><option value="CNY">CNY</option><option value="PKR">PKR</option>
+    </select></div>
+    <div class="field"><label>PRODUCT COVER IMAGE</label><input name="image" type="file" accept="image/jpeg,image/png,image/webp"></div>
+    <div class="field full"><label>PRODUCT PDF FILE</label><input name="pdf" type="file" accept="application/pdf" required></div>
    </div>
-   <div class="actions">
-    <button class="primary" type="submit">Upload Product ↗</button>
-   </div>
+   <div class="actions"><button class="primary" type="submit">Upload Product ↗</button></div>
   </form>
   <div id="uploadMsg" class="notice"></div>
  </div>
@@ -424,16 +274,11 @@ input:focus,select:focus,textarea:focus{border-color:var(--muted)}
 <section id="top5" class="section">
  <div class="eyebrow">Homepage collection</div>
  <h1>Top 5 Products.</h1>
- <p class="subtitle">Select exactly five products to show in the homepage Top 5 collection. Selection order determines their display order.</p>
+ <p class="subtitle">Select exactly five products. Selection order determines their display order.</p>
  <div class="panel">
-  <div class="panel-head">
-   <h3>Choose your featured products</h3>
-   <span id="selectedCount" class="small-note">0 selected</span>
-  </div>
+  <div class="panel-head"><h3>Choose your featured products</h3><span id="selectedCount" class="small-note">0 selected</span></div>
   <div id="topProducts" class="product-list"></div>
-  <div class="actions">
-   <button class="primary" onclick="saveTop5()">Save Top 5 ↗</button>
-  </div>
+  <div class="actions"><button class="primary" onclick="saveTop5()">Save Top 5 ↗</button></div>
   <div id="topMsg" class="notice"></div>
  </div>
 </section>
@@ -441,7 +286,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--muted)}
 <section id="highlights" class="section">
  <div class="eyebrow">Homepage appearance</div>
  <h1>Highlight Cards.</h1>
- <p class="subtitle">Change the image, title, short text and category of each homepage Highlight Card.</p>
+ <p class="subtitle">Change each card's image, title, text, category and image position.</p>
  <div id="highlightGrid" class="highlight-grid"></div>
  <div id="highlightMsg" class="notice"></div>
 </section>
@@ -451,58 +296,55 @@ input:focus,select:focus,textarea:focus{border-color:var(--muted)}
 </div>
 
 <script>
-const API = "https://almamoon-backend.onrender.com/api/admin";
+const API="https://almamoon-backend.onrender.com/api/admin";
+let adminSecret="";
+let products=[];
+let highlights=[];
+let selectedIds=[];
+let websiteSettings={};
 
-let adminSecret = "";
-let products = [];
-let highlights = [];
-let selectedIds = [];
+const defaultSettings={
+ eyebrow:"A curated digital collection",
+ heroTitle:"Continue with Almamoon",
+ heroSubtitle:"Create your space with thoughtfully designed digital templates.",
+ buttonText:"Explore products",
+ aboutText:"Discover digital products designed to make your work easier.",
+ footerText:"© Almamoon. All rights reserved.",
+ contactText:"",
+ bgColor:"#f4f3f0",
+ inkColor:"#181818",
+ accentColor:"#181818",
+ buttonTextColor:"#ffffff"
+};
 
-function toggleTheme(){
- document.body.classList.toggle("dark");
-}
-
+function toggleTheme(){document.body.classList.toggle("dark")}
 function showMessage(id,message){
  const el=document.getElementById(id);
  el.textContent=message;
  el.classList.add("show");
 }
-
 function hideMessage(id){
  const el=document.getElementById(id);
  el.textContent="";
  el.classList.remove("show");
 }
-
+function escapeHTML(value){
+ return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
+}
 async function apiFetch(path,options={}){
- const headers={
-  ...(options.headers||{}),
-  "Authorization":"Bearer "+adminSecret
- };
-
+ const headers={...(options.headers||{}),"Authorization":"Bearer "+adminSecret};
  const response=await fetch(API+path,{...options,headers});
  const data=await response.json().catch(()=>({}));
-
- if(!response.ok){
-  throw new Error(data.error||data.message||"Request failed: "+response.status);
- }
+ if(!response.ok)throw new Error(data.error||data.message||"Request failed: "+response.status);
  return data;
 }
-
 async function connect(){
  const secret=document.getElementById("secret").value.trim();
- const msg=document.getElementById("loginMsg");
- msg.classList.remove("show");
-
- if(!secret){
-  showMessage("loginMsg","Please enter your Admin Secret.");
-  return;
- }
-
+ hideMessage("loginMsg");
+ if(!secret){showMessage("loginMsg","Please enter your Admin Secret.");return}
  adminSecret=secret;
-
  try{
-  await Promise.all([loadProducts(),loadHighlights()]);
+  await Promise.all([loadProducts(),loadHighlights(),loadWebsiteSettings()]);
   document.getElementById("login").style.display="none";
   document.getElementById("app").style.display="block";
   updateStats();
@@ -511,258 +353,249 @@ async function connect(){
   showMessage("loginMsg",error.message+" Please check your Admin Secret and server.");
  }
 }
-
 function logout(){
- adminSecret="";
- products=[];
- highlights=[];
- selectedIds=[];
+ adminSecret="";products=[];highlights=[];selectedIds=[];
  document.getElementById("app").style.display="none";
  document.getElementById("login").style.display="block";
  document.getElementById("secret").value="";
 }
-
 function showSection(id,button){
  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
  document.getElementById(id).classList.add("active");
-
  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
- if(button) button.classList.add("active");
+ if(button)button.classList.add("active");
  else{
-  const buttons=[...document.querySelectorAll(".nav-btn")];
-  const match=buttons.find(b=>b.getAttribute("onclick")?.includes("'"+id+"'"));
-  if(match) match.classList.add("active");
+  const match=[...document.querySelectorAll(".nav-btn")].find(b=>b.getAttribute("onclick")?.includes("'"+id+"'"));
+  if(match)match.classList.add("active");
  }
 }
-
 async function loadProducts(){
  const data=await apiFetch("/products");
  products=Array.isArray(data)?data:(data.products||[]);
-
- selectedIds=products
-  .filter(p=>p.featured_order)
-  .sort((a,b)=>a.featured_order-b.featured_order)
-  .map(p=>p.id);
-
- renderProducts();
- renderTopProducts();
- updateStats();
+ selectedIds=products.filter(p=>p.featured_order).sort((a,b)=>a.featured_order-b.featured_order).map(p=>p.id);
+ renderProducts();renderTopProducts();updateStats();
 }
-
 async function loadHighlights(){
  const data=await apiFetch("/highlights");
  highlights=Array.isArray(data)?data:(data.highlights||[]);
- renderHighlights();
- updateStats();
+ renderHighlights();updateStats();
 }
-
 function updateStats(){
  document.getElementById("totalProducts").textContent=products.length;
- document.getElementById("featuredProducts").textContent=
-  products.filter(p=>p.featured_order).length+" / 5";
+ document.getElementById("featuredProducts").textContent=products.filter(p=>p.featured_order).length+" / 5";
  document.getElementById("totalHighlights").textContent=highlights.length+" / 5";
 }
 
-function escapeHTML(value){
- return String(value??"").replace(/[&<>"']/g,c=>({
-  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
- })[c]);
+// WEBSITE SETTINGS
+async function loadWebsiteSettings(){
+ const data=await apiFetch("/settings");
+ websiteSettings={...defaultSettings,...(data.settings||{})};
+ setEditorValues();
+ updatePreview();
+}
+function setEditorValues(){
+ const s=websiteSettings;
+ document.getElementById("sEyebrow").value=s.eyebrow;
+ document.getElementById("sHeroTitle").value=s.heroTitle;
+ document.getElementById("sHeroSubtitle").value=s.heroSubtitle;
+ document.getElementById("sButtonText").value=s.buttonText;
+ document.getElementById("sAbout").value=s.aboutText;
+ document.getElementById("sFooter").value=s.footerText;
+ document.getElementById("sContact").value=s.contactText||"";
+ document.getElementById("sBg").value=s.bgColor;
+ document.getElementById("sInk").value=s.inkColor;
+ document.getElementById("sAccent").value=s.accentColor;
+ document.getElementById("sButtonColor").value=s.buttonTextColor;
+}
+function readEditorValues(){
+ return {
+  eyebrow:document.getElementById("sEyebrow").value,
+  heroTitle:document.getElementById("sHeroTitle").value,
+  heroSubtitle:document.getElementById("sHeroSubtitle").value,
+  buttonText:document.getElementById("sButtonText").value,
+  aboutText:document.getElementById("sAbout").value,
+  footerText:document.getElementById("sFooter").value,
+  contactText:document.getElementById("sContact").value,
+  bgColor:document.getElementById("sBg").value,
+  inkColor:document.getElementById("sInk").value,
+  accentColor:document.getElementById("sAccent").value,
+  buttonTextColor:document.getElementById("sButtonColor").value
+ };
+}
+function updatePreview(){
+ const s=readEditorValues();
+ document.getElementById("previewEyebrow").textContent=s.eyebrow;
+ document.getElementById("previewTitle").textContent=s.heroTitle;
+ document.getElementById("previewSubtitle").textContent=s.heroSubtitle;
+ document.getElementById("previewButton").textContent=s.buttonText;
+ document.getElementById("previewAbout").textContent=s.aboutText;
+ document.getElementById("previewFooter").textContent=s.footerText+(s.contactText?" · "+s.contactText:"");
+ const hero=document.getElementById("previewHero");
+ hero.style.background=s.bgColor;
+ hero.style.color=s.inkColor;
+ document.getElementById("previewAbout").style.background=s.bgColor;
+ document.getElementById("previewAbout").style.color=s.inkColor;
+ document.getElementById("previewFooter").style.background=s.bgColor;
+ document.getElementById("previewFooter").style.color=s.inkColor;
+ const btn=document.getElementById("previewButton");
+ btn.style.background=s.accentColor;
+ btn.style.color=s.buttonTextColor;
+ btn.style.borderColor=s.accentColor;
+}
+async function saveWebsiteSettings(){
+ hideMessage("settingsMsg");
+ const settings=readEditorValues();
+ try{
+  const result=await apiFetch("/settings",{
+   method:"PUT",
+   headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({settings})
+  });
+  websiteSettings={...defaultSettings,...(result.settings||settings)};
+  showMessage("settingsMsg","Website settings saved successfully. Public website connection is the next step.");
+ }catch(error){showMessage("settingsMsg",error.message)}
+}
+function reloadWebsiteFrame(){
+ const frame=document.getElementById("websiteFrame");
+ frame.src="https://almamon662-svg.github.io/?refresh="+Date.now();
 }
 
+// PRODUCTS
 function renderProducts(){
  const box=document.getElementById("allProducts");
-
- if(!products.length){
-  box.innerHTML="<p class='small-note'>No products uploaded yet.</p>";
-  return;
- }
-
+ if(!products.length){box.innerHTML="<p class='small-note'>No products uploaded yet.</p>";return}
  box.innerHTML=products.map(p=>`
-  <div class="product-item">
-   <img src="${escapeHTML(p.image_url||"")}" alt="">
-   <div class="details">
-    <strong>${escapeHTML(p.title)}</strong>
-    <small>${escapeHTML(p.category||"Other")} · ${escapeHTML(p.currency||"USD")} ${escapeHTML(p.price)}</small>
+  <div>
+   <div class="product-item">
+    <img src="${escapeHTML(p.image_url||"")}" alt="">
+    <div class="details">
+     <strong>${escapeHTML(p.title)}</strong>
+     <small>${escapeHTML(p.category||"Other")} · ${escapeHTML(p.currency||"USD")} ${escapeHTML(p.price)} · ${p.active?"Active":"Hidden"}</small>
+    </div>
+    <button class="secondary" onclick="toggleProductEdit('${escapeHTML(p.id)}')">Edit</button>
+   </div>
+   <div class="product-edit" id="edit-${escapeHTML(p.id)}">
+    <form onsubmit="saveProduct(event,'${escapeHTML(p.id)}')">
+     <div class="form-grid">
+      <div class="field full"><label>PRODUCT NAME</label><input name="title" value="${escapeHTML(p.title)}" required></div>
+      <div class="field full"><label>DESCRIPTION</label><textarea name="description">${escapeHTML(p.description||"")}</textarea></div>
+      <div class="field"><label>CATEGORY</label><input name="category" value="${escapeHTML(p.category||"Other")}" required></div>
+      <div class="field"><label>PRICE</label><input name="price" type="number" min="0" step="0.01" value="${escapeHTML(p.price)}" required></div>
+      <div class="field"><label>CURRENCY</label><select name="currency">${["USD","BDT","EUR","GBP","CAD","AUD","INR","AED","SAR","MYR","SGD","JPY","CNY","PKR"].map(c=>`<option ${p.currency===c?"selected":""} value="${c}">${c}</option>`).join("")}</select></div>
+      <div class="field"><label>PRODUCT STATUS</label><select name="active"><option value="true" ${p.active?"selected":""}>Active</option><option value="false" ${!p.active?"selected":""}>Hidden</option></select></div>
+      <div class="field"><label>REPLACE COVER IMAGE</label><input name="image" type="file" accept="image/jpeg,image/png,image/webp"></div>
+      <div class="field"><label>REPLACE PDF FILE</label><input name="pdf" type="file" accept="application/pdf"></div>
+      <div class="field"><label>IMAGE FIT</label><select name="imageFit"><option value="contain" ${p.image_fit==="contain"?"selected":""}>Contain</option><option value="cover" ${p.image_fit==="cover"?"selected":""}>Cover</option><option value="fill" ${p.image_fit==="fill"?"selected":""}>Fill</option></select></div>
+      <div class="field"><label>IMAGE ZOOM</label><div class="range-row"><input name="imageZoom" type="range" min="1" max="3" step=".1" value="${p.image_zoom||1}" oninput="this.nextElementSibling.value=this.value"><output>${p.image_zoom||1}</output></div></div>
+      <div class="field"><label>HORIZONTAL POSITION</label><div class="range-row"><input name="imagePositionX" type="range" min="0" max="100" value="${p.image_position_x??50}" oninput="this.nextElementSibling.value=this.value"><output>${p.image_position_x??50}</output></div></div>
+      <div class="field"><label>VERTICAL POSITION</label><div class="range-row"><input name="imagePositionY" type="range" min="0" max="100" value="${p.image_position_y??50}" oninput="this.nextElementSibling.value=this.value"><output>${p.image_position_y??50}</output></div></div>
+     </div>
+     <div class="actions"><button class="primary" type="submit">Save Product Changes</button><button class="secondary" type="button" onclick="this.closest('.product-edit').classList.remove('open')">Close</button></div>
+    </form>
+    <div class="small-note" style="margin-top:10px">To remove an existing image, use the remove image option below.</div>
+    <button class="secondary" style="margin-top:8px" onclick="removeProductImage('${escapeHTML(p.id)}')">Remove Product Image</button>
+    <div class="notice" id="productMsg-${escapeHTML(p.id)}"></div>
    </div>
   </div>
  `).join("");
 }
+function toggleProductEdit(id){document.getElementById("edit-"+id).classList.toggle("open")}
+async function saveProduct(event,id){
+ event.preventDefault();
+ const form=event.target;
+ const msg="productMsg-"+id;
+ hideMessage(msg);
+ const data=new FormData(form);
+ try{
+  await apiFetch("/products/"+encodeURIComponent(id),{method:"PUT",body:data});
+  showMessage(msg,"Product updated successfully.");
+  await loadProducts();
+  document.getElementById("edit-"+id)?.classList.add("open");
+ }catch(error){showMessage(msg,error.message)}
+}
+async function removeProductImage(id){
+ if(!confirm("Are you sure you want to remove this product image?"))return;
+ const data=new FormData();
+ data.append("removeImage","true");
+ try{
+  await apiFetch("/products/"+encodeURIComponent(id),{method:"PUT",body:data});
+  await loadProducts();
+  alert("Product image removed.");
+ }catch(error){alert(error.message)}
+}
 
+// TOP 5
 function renderTopProducts(){
  const box=document.getElementById("topProducts");
-
- if(!products.length){
-  box.innerHTML="<p class='small-note'>Upload products before selecting Top 5.</p>";
-  updateSelectedCount();
-  return;
- }
-
- box.innerHTML=products.map(p=>{
-  const selected=selectedIds.includes(p.id);
-  const order=selectedIds.indexOf(p.id)+1;
-
-  return `
-   <label class="product-item">
-    <input type="checkbox" value="${escapeHTML(p.id)}"
-     ${selected?"checked":""}
-     onchange="toggleTop('${escapeHTML(p.id)}',this.checked)">
-    <img src="${escapeHTML(p.image_url||"")}" alt="">
-    <span class="details">
-     <strong>${escapeHTML(p.title)}</strong>
-     <small>${selected?"Selected position "+order:"Not selected"} · ${escapeHTML(p.category||"Other")}</small>
-    </span>
-   </label>
-  `;
+ if(!products.length){box.innerHTML="<p class='small-note'>Upload products before selecting Top 5.</p>";updateSelectedCount();return}
+ box.innerHTML=products.filter(p=>p.active).map(p=>{
+  const selected=selectedIds.includes(p.id),order=selectedIds.indexOf(p.id)+1;
+  return `<label class="product-item"><input type="checkbox" value="${escapeHTML(p.id)}" ${selected?"checked":""} onchange="toggleTop('${escapeHTML(p.id)}',this.checked)"><img src="${escapeHTML(p.image_url||"")}" alt=""><span class="details"><strong>${escapeHTML(p.title)}</strong><small>${selected?"Selected position "+order:"Not selected"} · ${escapeHTML(p.category||"Other")}</small></span></label>`;
  }).join("");
-
  updateSelectedCount();
 }
-
 function toggleTop(id,checked){
- if(checked){
-  if(selectedIds.length>=5){
-   alert("You can select only five products.");
-   renderTopProducts();
-   return;
-  }
-  selectedIds.push(id);
- }else{
-  selectedIds=selectedIds.filter(x=>x!==id);
- }
+ if(checked){if(selectedIds.length>=5){alert("You can select only five products.");renderTopProducts();return}selectedIds.push(id)}
+ else selectedIds=selectedIds.filter(x=>x!==id);
  renderTopProducts();
 }
-
-function updateSelectedCount(){
- document.getElementById("selectedCount").textContent=
-  selectedIds.length+" / 5 selected";
-}
-
+function updateSelectedCount(){document.getElementById("selectedCount").textContent=selectedIds.length+" / 5 selected"}
 async function saveTop5(){
  hideMessage("topMsg");
-
- if(selectedIds.length!==5){
-  showMessage("topMsg","Please select exactly five products.");
-  return;
- }
-
+ if(selectedIds.length!==5){showMessage("topMsg","Please select exactly five products.");return}
  try{
-  await apiFetch("/products/featured",{
-   method:"PUT",
-   headers:{"Content-Type":"application/json"},
-   body:JSON.stringify({productIds:selectedIds})
-  });
-
-  await loadProducts();
-  showMessage("topMsg","Your homepage Top 5 products have been saved.");
- }catch(error){
-  showMessage("topMsg",error.message);
- }
+  await apiFetch("/products/featured",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({productIds:selectedIds})});
+  await loadProducts();showMessage("topMsg","Your homepage Top 5 products have been saved.");
+ }catch(error){showMessage("topMsg",error.message)}
 }
 
-const categories=[
- "All Templates",
- "Resume & CV Templates",
- "Presentation Templates",
- "Social Media Templates",
- "Menu Templates"
-];
-
+// HIGHLIGHTS
+const categories=["All Templates","Resume & CV Templates","Presentation Templates","Social Media Templates","Menu Templates"];
 function renderHighlights(){
  const box=document.getElementById("highlightGrid");
-
- if(!highlights.length){
-  box.innerHTML="<p class='small-note'>No highlight records found. Check the homepage_highlights table.</p>";
-  return;
- }
-
+ if(!highlights.length){box.innerHTML="<p class='small-note'>No highlight records found. Check homepage_highlights table.</p>";return}
  box.innerHTML=highlights.map(h=>{
-  const position=h.position;
-  const options=categories.map(c=>`
-   <option value="${escapeHTML(c)}" ${h.category===c?"selected":""}>${escapeHTML(c)}</option>
-  `).join("");
-
-  return `
-   <div class="highlight-card">
-    <div class="eyebrow">Highlight 0${position}</div>
-    <img id="preview${position}" src="${escapeHTML(h.image_url||"")}" alt="Highlight preview">
-    <form onsubmit="saveHighlight(event,${position})">
-     <div class="field">
-      <label>CARD TITLE</label>
-      <input name="title" value="${escapeHTML(h.title||"")}" required>
-     </div>
-     <div class="field">
-      <label>SHORT TEXT</label>
-      <input name="subtitle" value="${escapeHTML(h.subtitle||"")}" placeholder="Short description">
-     </div>
-     <div class="field">
-      <label>CATEGORY</label>
-      <select name="category">${options}</select>
-     </div>
-     <div class="field">
-      <label>CHANGE CARD IMAGE</label>
-      <input name="image" type="file" accept="image/*"
-       onchange="previewHighlight(this,${position})">
-     </div>
-     <div class="actions">
-      <button class="primary" type="submit">Save Highlight ↗</button>
-     </div>
-    </form>
-   </div>
-  `;
+  const pos=h.position;
+  const options=categories.map(c=>`<option value="${escapeHTML(c)}" ${h.category===c?"selected":""}>${escapeHTML(c)}</option>`).join("");
+  return `<div class="highlight-card">
+   <div class="eyebrow">Highlight 0${pos}</div>
+   <img id="preview${pos}" src="${escapeHTML(h.image_url||"")}" alt="Highlight preview">
+   <form onsubmit="saveHighlight(event,${pos})">
+    <div class="field"><label>CARD TITLE</label><input name="title" value="${escapeHTML(h.title||"")}" required></div>
+    <div class="field"><label>SHORT TEXT</label><input name="subtitle" value="${escapeHTML(h.subtitle||"")}" placeholder="Short description"></div>
+    <div class="field"><label>CATEGORY</label><select name="category">${options}</select></div>
+    <div class="field"><label>CHANGE CARD IMAGE</label><input name="image" type="file" accept="image/jpeg,image/png,image/webp" onchange="previewHighlight(this,${pos})"></div>
+    <div class="field"><label>IMAGE FIT</label><select name="imageFit"><option value="cover" ${(h.image_fit||"cover")==="cover"?"selected":""}>Cover</option><option value="contain" ${h.image_fit==="contain"?"selected":""}>Contain</option><option value="fill" ${h.image_fit==="fill"?"selected":""}>Fill</option></select></div>
+    <div class="field"><label>ZOOM</label><div class="range-row"><input name="imageZoom" type="range" min="1" max="3" step=".1" value="${h.image_zoom||1}" oninput="this.nextElementSibling.value=this.value"><output>${h.image_zoom||1}</output></div></div>
+    <div class="field"><label>HORIZONTAL POSITION</label><div class="range-row"><input name="imagePositionX" type="range" min="0" max="100" value="${h.image_position_x??50}" oninput="this.nextElementSibling.value=this.value"><output>${h.image_position_x??50}</output></div></div>
+    <div class="field"><label>VERTICAL POSITION</label><div class="range-row"><input name="imagePositionY" type="range" min="0" max="100" value="${h.image_position_y??50}" oninput="this.nextElementSibling.value=this.value"><output>${h.image_position_y??50}</output></div></div>
+    <div class="actions"><button class="primary" type="submit">Save Highlight ↗</button></div>
+   </form>
+  </div>`;
  }).join("");
 }
-
-function previewHighlight(input,position){
- if(input.files&&input.files[0]){
-  document.getElementById("preview"+position).src=
-   URL.createObjectURL(input.files[0]);
- }
+function previewHighlight(input,pos){
+ if(input.files&&input.files[0])document.getElementById("preview"+pos).src=URL.createObjectURL(input.files[0]);
 }
-
-async function saveHighlight(event,position){
- event.preventDefault();
- hideMessage("highlightMsg");
-
- const form=event.target;
- const data=new FormData(form);
-
+async function saveHighlight(event,pos){
+ event.preventDefault();hideMessage("highlightMsg");
+ const data=new FormData(event.target);
  try{
-  await apiFetch("/highlights/"+position,{
-   method:"PUT",
-   body:data
-  });
-
-  await loadHighlights();
-  showMessage("highlightMsg","Highlight "+position+" saved successfully.");
- }catch(error){
-  showMessage("highlightMsg",error.message);
- }
+  await apiFetch("/highlights/"+pos,{method:"PUT",body:data});
+  await loadHighlights();showMessage("highlightMsg","Highlight "+pos+" saved successfully.");
+ }catch(error){showMessage("highlightMsg",error.message)}
 }
 
+// UPLOAD
 document.getElementById("uploadForm").addEventListener("submit",async function(event){
- event.preventDefault();
- hideMessage("uploadMsg");
-
- const button=this.querySelector("button[type=submit]");
- button.disabled=true;
- button.textContent="Uploading...";
-
+ event.preventDefault();hideMessage("uploadMsg");
+ const button=this.querySelector('button[type="submit"]');
+ button.disabled=true;button.textContent="Uploading...";
  try{
-  const data=new FormData(this);
-  await apiFetch("/products",{
-   method:"POST",
-   body:data
-  });
-
-  this.reset();
-  showMessage("uploadMsg","Product uploaded successfully.");
-  await loadProducts();
- }catch(error){
-  showMessage("uploadMsg",error.message);
- }finally{
-  button.disabled=false;
-  button.textContent="Upload Product ↗";
- }
+  await apiFetch("/products",{method:"POST",body:new FormData(this)});
+  this.reset();showMessage("uploadMsg","Product uploaded successfully.");await loadProducts();
+ }catch(error){showMessage("uploadMsg",error.message)}
+ finally{button.disabled=false;button.textContent="Upload Product ↗"}
 });
 </script>
 </body>
