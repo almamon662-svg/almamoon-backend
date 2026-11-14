@@ -1,17 +1,43 @@
 
 require("dotenv").config();
+
 const path = require("path");
 const express = require("express");
 const axios = require("axios");
 const { createClient } = require("@supabase/supabase-js");
 const adminRoutes = require("./src/admin");
+
 const app = express();
+
+// CORS configuration
+const allowedOrigins = [
+  "https://almamon662-svg.github.io"
+];
+
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
+
+  res.setHeader("Vary", "Origin");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(204);
+  }
+
+  next();
+});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
+
 app.use("/api/admin", adminRoutes);
-app.use("/api/admin", adminRoutes);
+
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -41,6 +67,7 @@ app.get("/api/products", async (req, res) => {
 
     res.json(data);
   } catch (error) {
+    console.error("PRODUCT_FETCH_ERROR:", error.message);
     res.status(500).json({ error: "Could not load products" });
   }
 });
