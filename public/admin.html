@@ -1,1 +1,277 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Almamoon Admin Panel</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 30px 15px;
+      font-family: Arial, sans-serif;
+      background: #f4f4f8;
+      color: #222;
+    }
+
+    .container {
+      max-width: 650px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 5px 25px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #777;
+      margin-bottom: 30px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin: 18px 0 8px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 25px;
+      padding: 15px;
+      border: none;
+      border-radius: 8px;
+      background: #111827;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background: #888;
+      cursor: not-allowed;
+    }
+
+    #message {
+      margin-top: 20px;
+      padding: 12px;
+      border-radius: 8px;
+      display: none;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .success {
+      background: #e7f8ed;
+      color: #176534;
+    }
+
+    .error {
+      background: #fff0f0;
+      color: #a32121;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <h1>Almamoon Admin</h1>
+
+    <p class="subtitle">
+      Upload your digital products
+    </p>
+
+    <form id="productForm">
+
+      <label for="adminSecret">Admin Secret</label>
+      <input
+        type="password"
+        id="adminSecret"
+        placeholder="Enter your admin secret"
+        required
+      >
+
+      <label for="title">Product Name</label>
+      <input
+        type="text"
+        id="title"
+        placeholder="Enter product name"
+        required
+      >
+
+      <label for="description">Description</label>
+      <textarea
+        id="description"
+        placeholder="Describe your product"
+      ></textarea>
+
+      <label for="price">Price</label>
+      <input
+        type="number"
+        id="price"
+        min="0"
+        step="0.01"
+        placeholder="Enter price"
+        required
+      >
+
+      <label for="currency">Currency</label>
+      <select id="currency">
+        <option value="BDT">BDT (৳)</option>
+        <option value="USD">USD ($)</option>
+      </select>
+
+      <label for="image">Product Cover Image</label>
+      <input
+        type="file"
+        id="image"
+        accept="image/jpeg,image/png,image/webp"
+      >
+
+      <label for="pdf">Product PDF</label>
+      <input
+        type="file"
+        id="pdf"
+        accept="application/pdf"
+        required
+      >
+
+      <button type="submit" id="uploadButton">
+        Upload Product
+      </button>
+
+    </form>
+
+    <div id="message"></div>
+
+  </div>
+
+  <script>
+    const form = document.getElementById("productForm");
+    const button = document.getElementById("uploadButton");
+    const message = document.getElementById("message");
+
+    form.addEventListener("submit", async function(event) {
+      event.preventDefault();
+
+      const adminSecret =
+        document.getElementById("adminSecret").value.trim();
+
+      const title =
+        document.getElementById("title").value.trim();
+
+      const description =
+        document.getElementById("description").value.trim();
+
+      const price =
+        document.getElementById("price").value;
+
+      const currency =
+        document.getElementById("currency").value;
+
+      const image =
+        document.getElementById("image").files[0];
+
+      const pdf =
+        document.getElementById("pdf").files[0];
+
+      if (!adminSecret || !title || !price || !pdf) {
+        showMessage("Please fill in all required fields.", false);
+        return;
+      }
+
+      if (pdf.type !== "application/pdf") {
+        showMessage("Please select a PDF file.", false);
+        return;
+      }
+
+      if (pdf.size > 20 * 1024 * 1024) {
+        showMessage("PDF size must be less than 20 MB.", false);
+        return;
+      }
+
+      const formData = new FormData();
+
+      formData.append("title", title);
+      formData.append("description", description);
+      formData.append("price", price);
+      formData.append("currency", currency);
+      formData.append("pdf", pdf);
+
+      if (image) {
+        formData.append("image", image);
+      }
+
+      button.disabled = true;
+      button.textContent = "Uploading...";
+      message.style.display = "none";
+
+      try {
+        const response = await fetch("/api/admin/products", {
+          method: "POST",
+          headers: {
+            "Authorization": "Bearer " + adminSecret
+          },
+          body: formData
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            result.error || "Product upload failed"
+          );
+        }
+
+        showMessage(
+          "Product uploaded successfully!\n" +
+          "Product ID: " + result.product.id,
+          true
+        );
+
+        form.reset();
+
+      } catch (error) {
+        showMessage(error.message, false);
+
+      } finally {
+        button.disabled = false;
+        button.textContent = "Upload Product";
+      }
+    });
+
+    function showMessage(text, success) {
+      message.textContent = text;
+      message.className = success ? "success" : "error";
+      message.style.display = "block";
+    }
+  </script>
+
+</body>
+</html>
