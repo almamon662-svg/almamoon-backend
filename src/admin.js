@@ -24,43 +24,6 @@ const CURRENCIES = [
 
 const HIGHLIGHT_POSITIONS = [1, 2, 3, 4, 5];
 
-const DEFAULT_HIGHLIGHTS = [
-  {
-    position: 1,
-    title: "All Templates",
-    subtitle: "Explore all templates",
-    category: "All Templates"
-  },
-  {
-    position: 2,
-    title: "Resume & CV Templates",
-    subtitle: "Build your professional profile",
-    category: "Resume & CV Templates"
-  },
-  {
-    position: 3,
-    title: "Presentation Templates",
-    subtitle: "Create impressive presentations",
-    category: "Presentation Templates"
-  },
-  {
-    position: 4,
-    title: "Social Media Templates",
-    subtitle: "Make your social media stand out",
-    category: "Social Media Templates"
-  },
-  {
-    position: 5,
-    title: "Menu Templates",
-    subtitle: "Design beautiful menus",
-    category: "Menu Templates"
-  }
-];
-
-// =====================================
-// ADMIN AUTHENTICATION
-// =====================================
-
 function adminAuth(req, res, next) {
   const token = req.headers.authorization;
 
@@ -81,7 +44,7 @@ router.use(adminAuth);
 
 
 // =====================================
-// IMAGE UPLOAD HELPER
+// IMAGE UPLOAD
 // =====================================
 
 async function uploadCover(file, folder = "covers") {
@@ -102,8 +65,7 @@ async function uploadCover(file, folder = "covers") {
     "_"
   );
 
-  const imagePath =
-    `${folder}/${Date.now()}-${safeName}`;
+  const imagePath = `${folder}/${Date.now()}-${safeName}`;
 
   const { error } = await supabase.storage
     .from("product-covers")
@@ -123,7 +85,56 @@ async function uploadCover(file, folder = "covers") {
 
 
 // =====================================
-// GET CURRENCIES
+// IMAGE SETTINGS VALIDATION
+// =====================================
+
+function getImageSettings(body, defaultFit) {
+  const settings = {};
+
+  const fields = [
+    ["image_position_x", "imagePositionX"],
+    ["image_position_y", "imagePositionY"],
+    ["image_zoom", "imageZoom"]
+  ];
+
+  for (const [column, field] of fields) {
+    if (body[field] !== undefined || body[column] !== undefined) {
+      const value = Number(body[field] ?? body[column]);
+
+      if (!Number.isFinite(value)) {
+        throw new Error(`Invalid ${field}`);
+      }
+
+      if (column === "image_zoom") {
+        if (value < 1 || value > 3) {
+          throw new Error("Zoom must be between 1 and 3");
+        }
+      } else if (value < 0 || value > 100) {
+        throw new Error(`${field} must be between 0 and 100`);
+      }
+
+      settings[column] = value;
+    }
+  }
+
+  const fit = body.imageFit ?? body.image_fit;
+
+  if (fit !== undefined) {
+    if (!["contain", "cover", "fill"].includes(fit)) {
+      throw new Error("Invalid image fit");
+    }
+
+    settings.image_fit = fit;
+  } else if (defaultFit) {
+    settings.image_fit = defaultFit;
+  }
+
+  return settings;
+}
+
+
+// =====================================
+// CURRENCIES
 // =====================================
 
 router.get("/currencies", (req, res) => {
@@ -135,16 +146,29 @@ router.get("/currencies", (req, res) => {
 
 
 // =====================================
-// GET ALL PRODUCTS FOR ADMIN
+// GET PRODUCTS
 // =====================================
 
 router.get("/products", async (req, res) => {
   try {
     const { data, error } = await supabase
       .from("products")
-      .select(
-        "id, title, description, price, currency, category, image_url, active, featured_order, created_at"
-      )
+      .select(`
+        id,
+        title,
+        description,
+        price,
+        currency,
+        category,
+        image_url,
+        image_position_x,
+        image_position_y,
+        image_zoom,
+        image_fit,
+        active,
+        featured_order,
+        created_at
+      `)
       .order("created_at", { ascending: false });
 
     if (error) throw error;
@@ -217,8 +241,7 @@ router.post(
         "_"
       );
 
-      uploadedPdfPath =
-        `${Date.now()}-${safePdfName}`;
+      uploadedPdfPath = `${Date.now()}-${safePdfName}`;
 
       const { error: pdfError } = await supabase.storage
         .from("digital-products")
@@ -245,7 +268,11 @@ router.post(
           category: category?.trim() || "Other",
           image_url: imageUrl,
           pdf_path: uploadedPdfPath,
-          active: true
+          active: true,
+          image_position_x: 50,
+          image_position_y: 50,
+          image_zoom: 1,
+          image_fit: "contain"
         })
         .select()
         .single();
@@ -272,6 +299,44 @@ router.post(
     }
   }
 );
+
+
+// =====================================
+// UPDATE PRODUCT IMAGE SETTINGS
+// =====================================
+
+router.patch("/products/:id/image-settings", async (req, res) => {
+  try {
+    const settings = getImageSettings(req.body);
+
+    if (Object.keys(settings).length === 0) {
+      return res.status(400).json({
+        error: "No image settings provided"
+      });
+    }
+
+    const { data, error } = await supabase
+      .from("products")
+      .update(settings)
+      .eq("id", req.params.id)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    res.json({
+      message: "Product image settings saved",
+      product: data
+    });
+
+  } catch (error) {
+    console.error("PRODUCT_IMAGE_SETTINGS_ERROR:", error.message);
+
+    res.status(400).json({
+      error: error.message || "Could not save product image settings"
+    });
+  }
+});
 
 
 // =====================================
@@ -313,7 +378,7 @@ router.patch("/products/:id/category", async (req, res) => {
 
 
 // =====================================
-// SELECT HOMEPAGE TOP 5 PRODUCTS
+// TOP 5 PRODUCTS
 // =====================================
 
 router.put("/products/featured", async (req, res) => {
@@ -347,7 +412,6 @@ router.put("/products/featured", async (req, res) => {
       });
     }
 
-    // Clear existing positions first
     const { error: clearError } = await supabase
       .from("products")
       .update({ featured_order: null })
@@ -355,7 +419,6 @@ router.put("/products/featured", async (req, res) => {
 
     if (clearError) throw clearError;
 
-    // Assign positions 1 to 5
     for (let i = 0; i < productIds.length; i++) {
       const { error } = await supabase
         .from("products")
@@ -381,7 +444,7 @@ router.put("/products/featured", async (req, res) => {
 
 
 // =====================================
-// GET HIGHLIGHT CARDS
+// GET HIGHLIGHTS
 // =====================================
 
 router.get("/highlights", async (req, res) => {
@@ -406,7 +469,7 @@ router.get("/highlights", async (req, res) => {
 
 
 // =====================================
-// UPDATE HIGHLIGHT CARD
+// UPDATE HIGHLIGHT + IMAGE SETTINGS
 // =====================================
 
 router.put(
@@ -439,7 +502,8 @@ router.put(
         title: title.trim(),
         subtitle: subtitle || "",
         category: category.trim(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
+        ...getImageSettings(req.body, "cover")
       };
 
       if (req.file) {
@@ -466,8 +530,8 @@ router.put(
     } catch (error) {
       console.error("HIGHLIGHT_UPDATE_ERROR:", error.message);
 
-      res.status(500).json({
-        error: "Could not update highlight card"
+      res.status(400).json({
+        error: error.message || "Could not update highlight card"
       });
     }
   }
@@ -475,7 +539,7 @@ router.put(
 
 
 // =====================================
-// END ADMIN ROUTES
+// END
 // =====================================
 
 module.exports = router;
