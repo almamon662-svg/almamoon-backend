@@ -116,14 +116,14 @@ router.post(
         message: "Product uploaded successfully",
         product: data
       });
+} catch (error) {
+  console.error("PRODUCT_UPLOAD_ERROR:", error);
 
-    } catch (error) {
-      console.error(error.message);
-
-      res.status(500).json({
-        error: "Product upload failed"
-      });
-    }
+  res.status(500).json({
+    error: "Product upload failed. Check server logs."
+  });
+}
+   
   }
 );
 
