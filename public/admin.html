@@ -83,6 +83,30 @@ input:focus,select:focus,textarea:focus{border-color:var(--muted)}
 .product-edit{display:none;margin-top:12px;padding:15px;border:1px solid var(--line);border-radius:10px;background:var(--soft)}
 .product-edit.open{display:block}
 .color-field{height:42px;padding:4px}
+
+/* DROPDOWN FIX */
+.field{
+ position:relative;
+ z-index:1;
+}
+.field select{
+ display:block;
+ width:100%;
+ min-height:42px;
+ position:relative;
+ z-index:5;
+ pointer-events:auto;
+ cursor:pointer;
+ appearance:auto;
+ -webkit-appearance:menulist;
+ background-color:var(--paper);
+ color:var(--ink);
+}
+.field select option{
+ background:#ffffff;
+ color:#181818;
+}
+
 @media(max-width:750px){
  .layout{grid-template-columns:1fr}
  .sidebar{border-right:0;border-bottom:1px solid var(--line);padding:10px;display:flex;gap:5px;overflow-x:auto}
@@ -163,7 +187,6 @@ input:focus,select:focus,textarea:focus{border-color:var(--muted)}
  </div>
 </section>
 
-<!-- WEBSITE EDITOR -->
 <section id="website" class="section">
  <div class="eyebrow">Website appearance</div>
  <h1>Website Editor.</h1>
@@ -230,7 +253,6 @@ input:focus,select:focus,textarea:focus{border-color:var(--muted)}
  </div>
 </section>
 
-<!-- PRODUCTS -->
 <section id="products" class="section">
  <div class="eyebrow">Store inventory</div>
  <h1>Products.</h1>
@@ -251,12 +273,15 @@ input:focus,select:focus,textarea:focus{border-color:var(--muted)}
     <div class="field full"><label>PRODUCT NAME</label><input name="title" required placeholder="Enter product name"></div>
     <div class="field full"><label>DESCRIPTION</label><textarea name="description" placeholder="Describe your product"></textarea></div>
     <div class="field"><label>CATEGORY</label><select name="category" required>
+     <option value="" disabled selected>Select a category</option>
      <option value="Resume & CV Templates">Resume & CV Templates</option>
      <option value="Presentation Templates">Presentation Templates</option>
      <option value="Social Media Templates">Social Media Templates</option>
      <option value="Menu Templates">Menu Templates</option>
      <option value="Canva Templates">Canva Templates</option>
-     <option value="E-books">E-books</option><option value="Business">Business</option><option value="Other">Other</option>
+     <option value="E-books">E-books</option>
+     <option value="Business">Business</option>
+     <option value="Other">Other</option>
     </select></div>
     <div class="field"><label>PRICE</label><input name="price" type="number" min="0" step="0.01" required placeholder="3.99"></div>
     <div class="field"><label>CURRENCY</label><select name="currency" id="currency">
@@ -461,6 +486,17 @@ function reloadWebsiteFrame(){
 }
 
 // PRODUCTS
+const productCategories=[
+ "Resume & CV Templates",
+ "Presentation Templates",
+ "Social Media Templates",
+ "Menu Templates",
+ "Canva Templates",
+ "E-books",
+ "Business",
+ "Other"
+];
+
 function renderProducts(){
  const box=document.getElementById("allProducts");
  if(!products.length){box.innerHTML="<p class='small-note'>No products uploaded yet.</p>";return}
@@ -479,7 +515,9 @@ function renderProducts(){
      <div class="form-grid">
       <div class="field full"><label>PRODUCT NAME</label><input name="title" value="${escapeHTML(p.title)}" required></div>
       <div class="field full"><label>DESCRIPTION</label><textarea name="description">${escapeHTML(p.description||"")}</textarea></div>
-      <div class="field"><label>CATEGORY</label><input name="category" value="${escapeHTML(p.category||"Other")}" required></div>
+      <div class="field"><label>CATEGORY</label><select name="category" required>
+       ${productCategories.map(c=>`<option value="${escapeHTML(c)}" ${String(p.category||"Other").trim()===c?"selected":""}>${escapeHTML(c)}</option>`).join("")}
+      </select></div>
       <div class="field"><label>PRICE</label><input name="price" type="number" min="0" step="0.01" value="${escapeHTML(p.price)}" required></div>
       <div class="field"><label>CURRENCY</label><select name="currency">${["USD","BDT","EUR","GBP","CAD","AUD","INR","AED","SAR","MYR","SGD","JPY","CNY","PKR"].map(c=>`<option ${p.currency===c?"selected":""} value="${c}">${c}</option>`).join("")}</select></div>
       <div class="field"><label>PRODUCT STATUS</label><select name="active"><option value="true" ${p.active?"selected":""}>Active</option><option value="false" ${!p.active?"selected":""}>Hidden</option></select></div>
