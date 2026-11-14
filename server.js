@@ -10,6 +10,22 @@ const adminRoutes = require("./src/admin");
 const app = express();
 
 // =====================================
+// SUPABASE CONFIGURATION
+// =====================================
+
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
+
+const PORT = process.env.PORT || 5000;
+
+const SSL_URL =
+  process.env.SSLCOMMERZ_IS_LIVE === "true"
+    ? "https://securepay.sslcommerz.com"
+    : "https://sandbox.sslcommerz.com";
+
+// =====================================
 // CORS
 // =====================================
 
@@ -25,10 +41,12 @@ app.use((req, res, next) => {
   }
 
   res.setHeader("Vary", "Origin");
+
   res.setHeader(
     "Access-Control-Allow-Methods",
     "GET, POST, PUT, PATCH, DELETE, OPTIONS"
   );
+
   res.setHeader(
     "Access-Control-Allow-Headers",
     "Content-Type, Authorization"
@@ -41,34 +59,16 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(express.json());
+app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static(path.join(__dirname, "public")));
-
-// =====================================
-// SUPABASE
-// =====================================
-
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
-
-const PORT = process.env.PORT || 5000;
-
-const SSL_URL =
-  process.env.SSLCOMMERZ_IS_LIVE === "true"
-    ? "https://securepay.sslcommerz.com"
-    : "https://sandbox.sslcommerz.com";
-
 
 // =====================================
 // ADMIN ROUTES
 // =====================================
 
 app.use("/api/admin", adminRoutes);
-
 
 // =====================================
 // HOME
@@ -78,6 +78,32 @@ app.get("/", (req, res) => {
   res.send("Welcome to Almamoon Backend!");
 });
 
+// =====================================
+// GET WEBSITE SETTINGS
+// =====================================
+
+app.get("/api/settings", async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("site_settings")
+      .select("settings")
+      .eq("id", "main")
+      .single();
+
+    if (error) throw error;
+
+    res.setHeader("Cache-Control", "no-store");
+
+    res.json(data?.settings || {});
+
+  } catch (error) {
+    console.error("SITE_SETTINGS_FETCH_ERROR:", error.message);
+
+    res.status(500).json({
+      error: "Could not load website settings"
+    });
+  }
+});
 
 // =====================================
 // GET ALL ACTIVE PRODUCTS
@@ -88,7 +114,7 @@ app.get("/api/products", async (req, res) => {
     const { data, error } = await supabase
       .from("products")
       .select(
-        "id, title, description, price, currency, category, image_url, featured_order"
+        "id, title, description, price, currency, category, image_url, featured_order, image_position_x, image_position_y, image_zoom, image_fit"
       )
       .eq("active", true)
       .order("created_at", { ascending: false });
@@ -106,7 +132,6 @@ app.get("/api/products", async (req, res) => {
   }
 });
 
-
 // =====================================
 // GET HOMEPAGE TOP 5 PRODUCTS
 // =====================================
@@ -116,7 +141,7 @@ app.get("/api/products/top5", async (req, res) => {
     const { data, error } = await supabase
       .from("products")
       .select(
-        "id, title, description, price, currency, category, image_url, featured_order"
+        "id, title, description, price, currency, category, image_url, featured_order, image_position_x, image_position_y, image_zoom, image_fit"
       )
       .eq("active", true)
       .not("featured_order", "is", null)
@@ -135,16 +160,17 @@ app.get("/api/products/top5", async (req, res) => {
   }
 });
 
-
 // =====================================
-// GET PUBLIC HOMEPAGE HIGHLIGHTS
+// GET HOMEPAGE HIGHLIGHTS
 // =====================================
 
 app.get("/api/highlights", async (req, res) => {
   try {
     const { data, error } = await supabase
       .from("homepage_highlights")
-      .select("position, title, subtitle, category, image_url")
+      .select(
+        "position, title, subtitle, category, image_url, image_position_x, image_position_y, image_zoom, image_fit"
+      )
       .order("position", { ascending: true });
 
     if (error) throw error;
@@ -159,7 +185,6 @@ app.get("/api/highlights", async (req, res) => {
     });
   }
 });
-
 
 // =====================================
 // CREATE CHECKOUT
@@ -192,10 +217,9 @@ app.post("/api/checkout", async (req, res) => {
       });
     }
 
-    // SSLCommerz checkout is restricted to BDT here.
     if (product.currency !== "BDT") {
       return res.status(400).json({
-        error: "This product currency is not supported by the current payment gateway. Please use a BDT-priced product."
+        error: "Only BDT products are supported by the current payment gateway."
       });
     }
 
@@ -286,17 +310,13 @@ app.post("/api/checkout", async (req, res) => {
   }
 });
 
-
 // =====================================
-// PAYMENT SUCCESS RETURN
+// PAYMENT SUCCESS
 // =====================================
 
 app.post("/payment/success", (req, res) => {
-  res.send(
-    "Payment submitted. Verification is pending."
-  );
+  res.send("Payment submitted. Verification is pending.");
 });
-
 
 // =====================================
 // PAYMENT FAILED
@@ -306,7 +326,6 @@ app.post("/payment/fail", (req, res) => {
   res.send("Payment failed. Please try again.");
 });
 
-
 // =====================================
 // PAYMENT CANCELLED
 // =====================================
@@ -314,7 +333,6 @@ app.post("/payment/fail", (req, res) => {
 app.post("/payment/cancel", (req, res) => {
   res.send("Payment cancelled.");
 });
-
 
 // =====================================
 // PAYMENT IPN VERIFICATION
@@ -325,9 +343,7 @@ app.post("/payment/ipn", async (req, res) => {
     const { val_id, tran_id } = req.body;
 
     if (!val_id || !tran_id) {
-      return res.status(400).send(
-        "Missing payment details"
-      );
+      return res.status(400).send("Missing payment details");
     }
 
     const validation = await axios.get(
@@ -361,9 +377,7 @@ app.post("/payment/ipn", async (req, res) => {
       payment.currency === order.currency;
 
     if (!valid) {
-      return res.status(400).send(
-        "Payment verification failed"
-      );
+      return res.status(400).send("Payment verification failed");
     }
 
     if (order.status !== "PAID") {
@@ -384,12 +398,9 @@ app.post("/payment/ipn", async (req, res) => {
       error.response?.data || error.message
     );
 
-    res.status(500).send(
-      "IPN verification failed"
-    );
+    res.status(500).send("IPN verification failed");
   }
 });
-
 
 // =====================================
 // SECURE PDF DOWNLOAD
@@ -420,20 +431,18 @@ app.get("/api/download/:orderId", async (req, res) => {
 
     if (
       order.status !== "PAID" ||
-      order.customer_email.toLowerCase() !==
-        String(email).toLowerCase()
+      order.customer_email.toLowerCase() !== String(email).toLowerCase()
     ) {
       return res.status(403).json({
         error: "Access denied"
       });
     }
 
-    const { data: product, error: productError } =
-      await supabase
-        .from("products")
-        .select("pdf_path")
-        .eq("id", order.product_id)
-        .single();
+    const { data: product, error: productError } = await supabase
+      .from("products")
+      .select("pdf_path")
+      .eq("id", order.product_id)
+      .single();
 
     if (productError || !product?.pdf_path) {
       return res.status(404).json({
@@ -441,10 +450,9 @@ app.get("/api/download/:orderId", async (req, res) => {
       });
     }
 
-    const { data: signed, error: signedError } =
-      await supabase.storage
-        .from("digital-products")
-        .createSignedUrl(product.pdf_path, 60);
+    const { data: signed, error: signedError } = await supabase.storage
+      .from("digital-products")
+      .createSignedUrl(product.pdf_path, 60);
 
     if (signedError) throw signedError;
 
@@ -453,10 +461,7 @@ app.get("/api/download/:orderId", async (req, res) => {
     });
 
   } catch (error) {
-    console.error(
-      "DOWNLOAD_ERROR:",
-      error.message
-    );
+    console.error("DOWNLOAD_ERROR:", error.message);
 
     res.status(500).json({
       error: "Download failed"
@@ -464,13 +469,10 @@ app.get("/api/download/:orderId", async (req, res) => {
   }
 });
 
-
 // =====================================
 // START SERVER
 // =====================================
 
 app.listen(PORT, () => {
-  console.log(
-    `Almamoon Backend running on port ${PORT}`
-  );
+  console.log(`Almamoon Backend running on port ${PORT}`);
 });
